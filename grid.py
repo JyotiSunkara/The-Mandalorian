@@ -19,7 +19,6 @@ class Grid:
         self._matrix = numpy.full((self._rows, self._columns), ' ', dtype='<U20')
     
     '''Creates entire grid'''
-    # def create_grid(self):
 
     def getRows(self):
         return self._rows

@@ -9,7 +9,7 @@ from grid import Grid
 class Scenery:
     def __init__(self):
         self._sky = Fore.BLUE + "_" + Fore.RESET
-        self._ground = Fore.YELLOW + "_" + Fore.RESET
+        self._ground = Fore.LIGHTMAGENTA_EX + "_" + Fore.RESET
 
 
     def createGround(self, grid):

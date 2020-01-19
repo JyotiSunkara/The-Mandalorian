@@ -1,7 +1,7 @@
 from colorama import Fore, Back, Style
 import numpy
 
-
+powerMatrix = numpy.array([("<","i","a","m","s","p","e","e","d",">")])
 class Din:
     '''This class defines the Mandalorian Din and helps him move around, 
     obtaining powerups, collection coins and checking collisions
@@ -18,6 +18,7 @@ class Din:
         self._killed = False
         self._heightAir = 0
         self._airTime = 0
+        self._shield = 0
     
     def getX(self):
         return self._x
@@ -30,11 +31,17 @@ class Din:
     
     def getAirTime(self):
         return self._airTime
-    
+
+    def getRight(self):
+        return self._dinRight
+
+    def getLeft(self):
+        return self._dinLeft
+
     def setX(self, x):
         self._x = x
 
-    def sety(self, y):
+    def setY(self, y):
         self._y = y
       
     def setDirection(self, direction):
@@ -46,23 +53,49 @@ class Din:
     def changeHeightAir(self, changeVal):
         self._heightAir = self._heightAir + changeVal
 
-    def changeX(self, changeVal):
+    def changeX(self, changeVal, grid, configObj, powerupSpeed):
+        
         self._x = self._x + changeVal
+        for i in range(self._x, self._x + 3):
+            for j in range(self._y, self._y + 3):
+                if grid[i,j] == "o":
+                    configObj.incrementCoins()
+                elif grid[i,j] == "0":
+                    configObj.decrementLives()
+                    configObj.restart()
+                    return -1
+        return 0
+
     
-    def changeY(self, changeVal):
+    def changeY(self, changeVal, grid, configObj, powerupSpeed):
+
         self._y = self._y + changeVal
+        for i in range(self._x, self._x + 3):
+            for j in range(self._y, self._y + 3):
+                if grid[i,j] == "o":
+                    configObj.incrementCoins()
+                elif grid[i,j] == "0":
+                    configObj.decrementLives()
+                    configObj.restart()
+                    return -1        
+        return 0
+
 
     def incrementAirTime(self):
         self._airTime = self._airTime + 1
 
-    def placeDin(self, grid):
+    def placeDin(self, grid, x, y, direction):
         '''Place the Mandalorian: Din on the grid at given position of top left of the character'''
+        self._x = x
+        self._y = y
+        self._direction = direction
         grid[self._x:self._x+3, self._y:self._y+3] = self._dinRight
        
     def removeDin(self, grid):
         grid[self._x:self._x+3, self._y:self._y+3] = " "
 
     def showDin(self, grid):
+
         if self._direction == 1:
             grid[self._x:self._x+3, self._y:self._y+3] = self._dinRight
         else:
@@ -96,3 +129,4 @@ class Din:
             return 0
         else:
             return 1
+    
