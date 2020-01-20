@@ -9,8 +9,11 @@ class Configure:
 		self._lives = 5
 		self._enemyLives = 5
 		self._shieldOn = 0
-		self.sheildTime = 60
+		self._sheildTime = 60
 		self._start = 0
+	
+	def setTime(self, value):
+		self._remainTime = value
 
 	def setStart(self, value):
 		self._start = value
@@ -33,6 +36,9 @@ class Configure:
 
 	def getLives(self):
 		return self._lives
+	
+	def getTime(self):
+		return self._remainTime
 
 	def restart(self):
 		os.system('clear')
@@ -41,7 +47,8 @@ class Configure:
 		self._beamsDestroyed = 0 
 		self._enemyLives = 5
 		self._shieldOn = 0
-		self.sheildTime = 60
+		self._sheildTime = 60
+		self._remainTime = 150
 
 	def isNumber(self, s):
 		try:
@@ -58,3 +65,6 @@ class Configure:
 			pass
 
 		return False
+
+	def getEnemyLives(self):
+		return self._enemyLives

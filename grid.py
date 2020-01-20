@@ -32,8 +32,9 @@ class Grid:
     '''Prints the visible portion of the grid and moves it'''
     def printView(self, start):
         for i in range(self._rows):
-            for j in range(start, start + 100):     # 100 columns are displayed at a time
-                print(self._matrix[i, j], end = '')
+            for j in range(start, start + 100):
+                if (j < 500):                                     # 100 columns are displayed at a time
+                    print(self._matrix[i, j], end = '')
             print()
 
   

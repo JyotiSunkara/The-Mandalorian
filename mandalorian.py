@@ -10,7 +10,9 @@ class Din:
         self._x = x
         self._y = y
         self._direction = direction
-        self._dinRight = numpy.array([ (" "," ",  "O"), ("(", "]", "\\"), (" ", "|", "|") ])
+        self._dinRight = numpy.array([ (" "," ",  "O"), 
+                                       ("(", "]", "\\"), 
+                                       (" ", "|", "|") ])
         self._dinLeft = numpy.array([ ("O", " ", " "), ("/", "[",")"), ("|", "|"," ") ])
         self._lives = 5
         self._allowedCollision = [" ", "o"]
@@ -19,6 +21,14 @@ class Din:
         self._heightAir = 0
         self._airTime = 0
         self._shield = 0
+        self._shieldMatrix = numpy.array([  (" ", " ", " ", " ", "=", " ", " ", " ", " "),              
+                                            (" ", " ", " ", "=", " ", "=", " ", " ", " "),      
+                                            (" ", " ", "=", " ", " ", " ", "=", " ", " "),    
+                                            (" ", " ", "=", " ", " ", " ", "=", " ", " "),  
+                                            (" ", " ", "=", " ", " ", " ", "=", " ", " "),  
+                                            (" ", " ", " ", "=", " ", "=", " ", " ", " "),      
+                                            (" ", " ", " ", " ", "=", " ", " ", " ", " "),
+                                        ])
     
     def getX(self):
         return self._x
@@ -95,7 +105,8 @@ class Din:
         grid[self._x:self._x+3, self._y:self._y+3] = " "
 
     def showDin(self, grid):
-
+        if self._shield == 1:
+            grid[self._x: self._x -3, self._y: self._y: self._y - 3] = self._shield
         if self._direction == 1:
             grid[self._x:self._x+3, self._y:self._y+3] = self._dinRight
         else:

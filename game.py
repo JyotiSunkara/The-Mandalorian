@@ -222,14 +222,16 @@ def moveDin():
 while True: 
     
     move(2,0)
-    print("Time Remaining:", end = '\t \t')
+    configObj.setTime(150 - (round(time.time()) - round(T)))
+    print("Time Remaining:", configObj.getTime(), end = '\t \t')
     print("Lives:", configObj.getLives(), end = '\t \t')
     print("Coins:", configObj.getCoins(), end = '\t \t')
-    print ("Enemy Lives:", end = '\t \t')
+    print ("Enemy Lives:", configObj.getEnemyLives(), end = '\t \t')
     print("Shield:")
 
     if (configObj.getStart() + 100) < 500:
-        configObj.changeStart(speedfactor)
+        if configObj.getStart() + speedfactor + 100 < 500:
+            configObj.changeStart(speedfactor)
     
     move(5,0)
     for k in range(2):
@@ -306,3 +308,8 @@ while True:
             addSpeedUps()
             continue
         mandalorianObj.showDin(gridObj.getMatrix())
+    
+    if configObj.getLives() == 0 or configObj.getTime() == 0:
+        os.system('clear')
+        print("Game Over!")
+        quit()
