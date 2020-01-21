@@ -9,12 +9,12 @@ init()
 def move (y, x):
     print("\033[%d;%dH" % (y, x))
 
-from mandalorian import Din
+from mandalorian import Din, Shield, Bullet
 from scenery import Scenery
 from grid import Grid
 from alarmexception import AlarmException
 from getch import _getChUnix as getChar
-from items import Item, Bullet, Laser, Coins, SpeedUp
+from items import Item, Laser, Coins, SpeedUp, Magnet
 from configure import Configure
 
 
@@ -22,6 +22,7 @@ gridObj = Grid(30, 500)
 
 mandalorianObj = Din(25, 10, 1)
 mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
+shieldObj = Shield(0, 0)
 
 sceneryObj = Scenery()
 
@@ -38,14 +39,22 @@ speedupObj = []
 speedupObj.append(SpeedUp(0,0))
 speedupObj.append(SpeedUp(0,0))
 
-def addSpeedUps():
+magnetObj = Magnet(5,60)
+
+
+def speedUps():
     for i in range(2):
         speedupObj[i].placeItem(gridObj.getMatrix(), random.randint(5,20), random.randint(100,300))
+    if magnetObj.gridFree(gridObj.getMatrix(), random.randint(5,10), random.randint(100,400)):
+        magnetObj.placeItem(gridObj.getMatrix())
 
-def removeSpeedUps():
+def removespeedUps():
     for i in range(2):
-        speedupObj[i].removeItem(gridObj.getMatrix())    
-
+        speedupObj[i].removeItem(gridObj.getMatrix())   
+    magnetObj.removeItem(gridObj.getMatrix())
+     
+inRange = False
+bulletObj = []
 
 def reprintLasers():
     laserObj[0].showItem(gridObj.getMatrix(),5,30)
@@ -64,6 +73,7 @@ def reprintLasers():
     laserObj[13].showItem(gridObj.getMatrix(),2,390)
     laserObj[14].showItem(gridObj.getMatrix(),20,390)
     laserObj[15].showItem(gridObj.getMatrix(),20,420)
+
 
 def reprintCoins():
     coinObj[0].showItem(gridObj.getMatrix(), 16,30)
@@ -118,16 +128,19 @@ coinObj[13].placeItem(gridObj.getMatrix(), 4,405)
 coinObj[14].placeItem(gridObj.getMatrix(), 20,405)
 coinObj[15].placeItem(gridObj.getMatrix(), 16,440)
 
-addSpeedUps()
+speedUps()
+
+
+
 
 T = time.time()
 
 configObj = Configure()
 
-
 speedfactor = 1
 configObj.setStart(0)
 gravity = 0.5
+remainingTime = 0
 
 def incrementSpeed():
     global speedfactor
@@ -139,6 +152,10 @@ def resetSpeed():
 
 
 def moveDin():
+
+    global remainingTime
+    global placed
+    global inRange
 
     ''' Moves Din left, right'''
     def alarmhandler(signum, frame):
@@ -159,66 +176,157 @@ def moveDin():
         signal.signal(signal.SIGALRM, signal.SIG_IGN)
         return ''
 	
-    if mandalorianObj.getAirHeight() > 0:
+    if mandalorianObj.getAirHeight() > 0 and inRange == False:
         mandalorianObj.incrementAirTime()
+    
+    if shieldObj.getEnd() == configObj.getTime():
+        shieldObj.removeShield(gridObj.getMatrix())
+        shieldObj.disableShield()
+        shieldObj.setWait(configObj.getTime() - 60)
+        reprintLasers()
+        
+        mandalorianObj.showDin(gridObj.getMatrix())
+        remainingTime = configObj.getTime() - shieldObj.getWait()
 
+    if shieldObj.getWait() == configObj.getTime():
+        shieldObj.setWait(0)
+        remainingTime = 0
+    
     keyPress = user_input()
 
     if keyPress == 'd':
         if mandalorianObj.daye(configObj.getStart()):
             mandalorianObj.removeDin(gridObj.getMatrix())
-            if mandalorianObj.changeY(speedfactor + 1, gridObj.getMatrix(), configObj, speedupObj) == -1:
+            shieldObj.removeShield(gridObj.getMatrix())
+            if mandalorianObj.changeY(speedfactor + 1, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
                 configObj.setStart(0)
+                for laser in laserObj:
+                    laser.setAlive(1)
                 resetSpeed()
                 mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-                removeSpeedUps()
+                removespeedUps()
                 reprintCoins()
                 reprintLasers()
-                addSpeedUps()
+                speedUps()
                 return
             mandalorianObj.setDirection(1)
+            shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+            reprintLasers()
+            
             mandalorianObj.showDin(gridObj.getMatrix())
+            
 
     if keyPress == 'a':
         if mandalorianObj.bayehaathkakhel(configObj.getStart()):
             mandalorianObj.removeDin(gridObj.getMatrix())
-            if mandalorianObj.changeY(-2, gridObj.getMatrix(), configObj, speedupObj) == -1:
+            shieldObj.removeShield(gridObj.getMatrix())
+            if mandalorianObj.changeY(-2, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
                 configObj.setStart(0)
+                for laser in laserObj:
+                    laser.setAlive(1)
                 resetSpeed()
                 mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-                removeSpeedUps()
+                removespeedUps()
                 reprintCoins()
                 reprintLasers()
-                addSpeedUps()
+                speedUps()
                 return
             mandalorianObj.setDirection(0)
+            shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+            reprintLasers()
+            
             mandalorianObj.showDin(gridObj.getMatrix())
+            
+
     
     if keyPress == 'w':
         if mandalorianObj.upupandaway():
             mandalorianObj.removeDin(gridObj.getMatrix())
+            shieldObj.removeShield(gridObj.getMatrix())
             mandalorianObj.setAirTime(0) 
-            if mandalorianObj.changeX(-1, gridObj.getMatrix(), configObj, speedupObj) == -1:
+            if mandalorianObj.changeX(-1, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
                 configObj.setStart(0)
+                for laser in laserObj:
+                    laser.setAlive(1)
                 resetSpeed()
                 mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-                removeSpeedUps()
+                removespeedUps()
                 reprintCoins()
                 reprintLasers()
-                addSpeedUps()
+                speedUps()
                 return
             mandalorianObj.changeHeightAir(1)
+            shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+            reprintLasers()
+            
             mandalorianObj.showDin(gridObj.getMatrix())
+            
+
     
     if keyPress == 'q':
         quit()
     
     if keyPress == 's':
-        bulletObj = Bullet(mandalorianObj.getX(), mandalorianObj.getY())
-
+        bulletObj.append(Bullet(mandalorianObj.getX() - 2, mandalorianObj.getY() + 1))
+        
     if keyPress == " ":
-        pass
-           
+        if shieldObj.getWait() == 0:
+            shieldObj.enableShield()
+            shieldObj.setEnd(configObj.getTime() - 10)
+            shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+            reprintLasers()
+            
+            mandalorianObj.showDin(gridObj.getMatrix())
+
+    if magnetObj.inRangeMando(gridObj.getMatrix(), mandalorianObj) == True and magnetObj.getPlaced() == 1:
+        inRange = True
+        moveX = 0
+        moveY = 0
+        if mandalorianObj.getX() > magnetObj.getX() and mandalorianObj.upupandaway():
+            moveX = -1
+            mandalorianObj.setAirTime(0) 
+            mandalorianObj.changeHeightAir(1)
+        elif mandalorianObj.getX() > magnetObj.getX() and mandalorianObj.getX() + 1 < 30:
+            moveX = 1
+        if mandalorianObj.getY() > magnetObj.getY() and mandalorianObj.bayehaathkakhel(configObj.getStart()):
+            moveY = -1
+        elif mandalorianObj.getY() < magnetObj.getY() and mandalorianObj.daye(configObj.getStart()):
+            moveY = 1
+
+        mandalorianObj.removeDin(gridObj.getMatrix())
+        shieldObj.removeShield(gridObj.getMatrix())
+        if mandalorianObj.changeX(moveX, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
+                configObj.setStart(0)
+                for laser in laserObj:
+                    laser.setAlive(1)
+                resetSpeed()
+                mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
+                removespeedUps()
+                reprintCoins()
+                reprintLasers()
+                speedUps()
+                return
+        if mandalorianObj.changeY(moveY, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
+                configObj.setStart(0)
+                for laser in laserObj:
+                    laser.setAlive(1)
+                resetSpeed()
+                mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
+                removespeedUps()
+                reprintCoins()
+                reprintLasers()
+                speedUps()
+                return
+        shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+        reprintLasers()
+        
+        mandalorianObj.showDin(gridObj.getMatrix())
+    else:
+        inRange = False
+        
+
+
+
 while True: 
     
     move(2,0)
@@ -227,7 +335,9 @@ while True:
     print("Lives:", configObj.getLives(), end = '\t \t')
     print("Coins:", configObj.getCoins(), end = '\t \t')
     print ("Enemy Lives:", configObj.getEnemyLives(), end = '\t \t')
-    print("Shield:")
+    if shieldObj.getWait() != 0:
+        remainingTime = configObj.getTime() - shieldObj.getWait()
+    print("Shield Wait Time:", remainingTime)
 
     if (configObj.getStart() + 100) < 500:
         if configObj.getStart() + speedfactor + 100 < 500:
@@ -238,76 +348,121 @@ while True:
         if speedupObj[k].showItem(gridObj.getMatrix(), mandalorianObj) == 1:
             incrementSpeed()
 
+    
     gridObj.printView(configObj.getStart())
     moveDin()
-    
+    magnetObj.showItem(gridObj.getMatrix())
+    reprintLasers()
+
+    for bullet in bulletObj:
+        if bullet.getPlaced()  == 1:
+            bullet.removeBullet(gridObj.getMatrix())
+        for i in range(5):
+            bullet.changeY(gridObj.getMatrix(), 1, laserObj)
+        placed = bullet.showBullet(gridObj.getMatrix())
+
+
     '''Gravity'''
-    if mandalorianObj.getAirHeight() > 0: 
+    if mandalorianObj.getAirHeight() > 0 and inRange == False: 
         distance = int (0.5 * gravity * (mandalorianObj.getAirTime()))
         if mandalorianObj.limbolow(distance) == 1:
             mandalorianObj.changeHeightAir(-distance)
             mandalorianObj.removeDin(gridObj.getMatrix())
+            shieldObj.removeShield(gridObj.getMatrix())
             for i in range(distance):
-                if mandalorianObj.changeX(1, gridObj.getMatrix(), configObj, speedupObj) == -1:
+                if mandalorianObj.changeX(1, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
                     configObj.setStart(0)
+                    for laser in laserObj:
+                        laser.setAlive(1)
                     resetSpeed()
                     mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-                    removeSpeedUps()
+                    removespeedUps()
                     reprintCoins()
                     reprintLasers()
-                    addSpeedUps()
+                    speedUps()
                     continue
-            mandalorianObj.changeX(-distance, gridObj.getMatrix(), configObj, speedupObj)
-            if mandalorianObj.changeX(distance, gridObj.getMatrix(), configObj, speedupObj) == -1:
+            mandalorianObj.changeX(-distance, gridObj.getMatrix(), configObj, speedupObj, shieldObj)
+            if mandalorianObj.changeX(distance, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
                 configObj.setStart(0)
+                for laser in laserObj:
+                    laser.setAlive(1)
                 resetSpeed()
                 mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-                removeSpeedUps()
+                removespeedUps()
                 reprintCoins()
                 reprintLasers()
-                addSpeedUps()
+                speedUps()
                 continue
+            shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+            reprintLasers()
+            
             mandalorianObj.showDin(gridObj.getMatrix())
+            
+
         elif mandalorianObj.limbolow(distance) == -1:
             while mandalorianObj.getX() < 25:
                 mandalorianObj.changeHeightAir(-1)
                 mandalorianObj.removeDin(gridObj.getMatrix())
-                if mandalorianObj.changeX(1, gridObj.getMatrix(), configObj, speedupObj) == -1:
+                shieldObj.removeShield(gridObj.getMatrix())
+                if mandalorianObj.changeX(1, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
                     configObj.setStart(0)
+                    for laser in laserObj:
+                        laser.setAlive(1)
                     resetSpeed()
                     mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-                    removeSpeedUps()
+                    removespeedUps()
                     reprintCoins()
                     reprintLasers()
-                    addSpeedUps()
+                    speedUps()
                     continue
+                shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+                reprintLasers()
+                
                 mandalorianObj.showDin(gridObj.getMatrix())
+                
+
 
     if (mandalorianObj.getY() - 1) < configObj.getStart():
         mandalorianObj.removeDin(gridObj.getMatrix())
-        if mandalorianObj.changeY(speedfactor, gridObj.getMatrix(), configObj, speedupObj) == -1:
+        shieldObj.removeShield(gridObj.getMatrix())
+        if mandalorianObj.changeY(speedfactor, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
             configObj.setStart(0)
+            for laser in laserObj:
+                laser.setAlive(1)
             resetSpeed()
             mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-            removeSpeedUps()
+            removespeedUps()
             reprintCoins()
             reprintLasers()
-            addSpeedUps()
+            speedUps()
             continue
+        shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+        reprintLasers()
+        
         mandalorianObj.showDin(gridObj.getMatrix())
+        
+
 
     if (mandalorianObj.getY() + 1) > (configObj.getStart() + 100):
         mandalorianObj.removeDin(gridObj.getMatrix())
-        if mandalorianObj.changeY(-1, gridObj.getMatrix(), configObj, speedupObj) == -1:
+        shieldObj.removeShield(gridObj.getMatrix())
+        if mandalorianObj.changeY(-1, gridObj.getMatrix(), configObj, speedupObj, shieldObj) == -1:
             configObj.setStart(0)
+            for laser in laserObj:
+                laser.setAlive(1)
             resetSpeed()
             mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
-            removeSpeedUps()
+            removespeedUps()
             reprintCoins()
             reprintLasers()
-            addSpeedUps()
+            speedUps()
             continue
+        shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
+        reprintLasers()
+        
         mandalorianObj.showDin(gridObj.getMatrix())
+        
+
     
     if configObj.getLives() == 0 or configObj.getTime() == 0:
         os.system('clear')

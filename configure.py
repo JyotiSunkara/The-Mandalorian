@@ -9,7 +9,6 @@ class Configure:
 		self._lives = 5
 		self._enemyLives = 5
 		self._shieldOn = 0
-		self._sheildTime = 60
 		self._start = 0
 	
 	def setTime(self, value):
@@ -46,8 +45,6 @@ class Configure:
 		self._coins = 0 
 		self._beamsDestroyed = 0 
 		self._enemyLives = 5
-		self._shieldOn = 0
-		self._sheildTime = 60
 		self._remainTime = 150
 
 	def isNumber(self, s):
