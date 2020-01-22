@@ -6,8 +6,8 @@ class Configure:
 		self._remainTime = 150
 		self._coins = 0 
 		self._beamsDestroyed = 0 
-		self._lives = 5
-		self._enemyLives = 5
+		self._lives = 30
+		self._enemyLives = 10
 		self._shieldOn = 0
 		self._start = 0
 	
@@ -32,6 +32,7 @@ class Configure:
 	def decrementLives(self):
 		if self._lives > 0:
 			self._lives = self._lives - 1
+		os.system('clear')
 
 	def getLives(self):
 		return self._lives
@@ -44,24 +45,13 @@ class Configure:
 		self._remainTime = 150
 		self._coins = 0 
 		self._beamsDestroyed = 0 
-		self._enemyLives = 5
+		self._enemyLives = 10
 		self._remainTime = 150
 
-	def isNumber(self, s):
-		try:
-			float(s)
-			return True
-		except ValueError:
-			pass
-	 
-		try:
-			import unicodedata
-			unicodedata.numeric(s)
-			return True
-		except (TypeError, ValueError):
-			pass
-
-		return False
 
 	def getEnemyLives(self):
 		return self._enemyLives
+
+	def enemyLoss(self):
+		self._enemyLives = self._enemyLives - 1
+		os.system('clear')

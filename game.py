@@ -3,7 +3,7 @@ import os
 import time
 import numpy
 import random
-from colorama import init
+from colorama import init, Fore, Back, Style
 init()
 
 def move (y, x):
@@ -16,6 +16,7 @@ from alarmexception import AlarmException
 from getch import _getChUnix as getChar
 from items import Item, Laser, Coins, SpeedUp, Magnet
 from configure import Configure
+from enemy import Dragon, IceBall
 
 
 gridObj = Grid(30, 500)
@@ -54,7 +55,7 @@ def removespeedUps():
     magnetObj.removeItem(gridObj.getMatrix())
      
 inRange = False
-bulletObj = []
+
 
 def reprintLasers():
     laserObj[0].showItem(gridObj.getMatrix(),5,30)
@@ -72,7 +73,7 @@ def reprintLasers():
     laserObj[12].showItem(gridObj.getMatrix(),15,360)
     laserObj[13].showItem(gridObj.getMatrix(),2,390)
     laserObj[14].showItem(gridObj.getMatrix(),20,390)
-    laserObj[15].showItem(gridObj.getMatrix(),20,420)
+    # laserObj[15].showItem(gridObj.getMatrix(),20,420)
 
 
 def reprintCoins():
@@ -109,7 +110,7 @@ laserObj[11].placeItem(gridObj.getMatrix(),5,330)
 laserObj[12].placeItem(gridObj.getMatrix(),15,360)
 laserObj[13].placeItem(gridObj.getMatrix(),2,390)
 laserObj[14].placeItem(gridObj.getMatrix(),20,390)
-laserObj[15].placeItem(gridObj.getMatrix(),20,420)
+# laserObj[15].placeItem(gridObj.getMatrix(),20,420)
 
 coinObj[0].placeItem(gridObj.getMatrix(), 16,30)
 coinObj[1].placeItem(gridObj.getMatrix(), 4,45)
@@ -130,8 +131,8 @@ coinObj[15].placeItem(gridObj.getMatrix(), 16,440)
 
 speedUps()
 
-
-
+dragonObj = Dragon()
+dragonObj.placeItem(gridObj.getMatrix(), 10, 459)
 
 T = time.time()
 
@@ -150,6 +151,8 @@ def resetSpeed():
     global speedfactor
     speedfactor = 1
 
+iceObj = []
+    
 
 def moveDin():
 
@@ -236,7 +239,7 @@ def moveDin():
             reprintLasers()
             
             mandalorianObj.showDin(gridObj.getMatrix())
-            
+    
 
     
     if keyPress == 'w':
@@ -267,7 +270,7 @@ def moveDin():
         quit()
     
     if keyPress == 's':
-        bulletObj.append(Bullet(mandalorianObj.getX() - 2, mandalorianObj.getY() + 1))
+        bulletObj.append(Bullet(mandalorianObj.getX() - 1, mandalorianObj.getY()))
         
     if keyPress == " ":
         if shieldObj.getWait() == 0:
@@ -324,25 +327,35 @@ def moveDin():
     else:
         inRange = False
         
-
-
-
+bulletObj = []
+fireball = 0
 while True: 
     
     move(2,0)
     configObj.setTime(150 - (round(time.time()) - round(T)))
-    print("Time Remaining:", configObj.getTime(), end = '\t \t')
+    print(Style.BRIGHT + "Time Remaining:", configObj.getTime(), end = '\t \t')
     print("Lives:", configObj.getLives(), end = '\t \t')
     print("Coins:", configObj.getCoins(), end = '\t \t')
-    print ("Enemy Lives:", configObj.getEnemyLives(), end = '\t \t')
+    print ("Enemy Lives:", configObj.getEnemyLives(), end = '\n')
     if shieldObj.getWait() != 0:
         remainingTime = configObj.getTime() - shieldObj.getWait()
     print("Shield Wait Time:", remainingTime)
 
-    if (configObj.getStart() + 100) < 500:
-        if configObj.getStart() + speedfactor + 100 < 500:
-            configObj.changeStart(speedfactor)
+    if configObj.getStart() + speedfactor + 100 < 500:
+        configObj.changeStart(speedfactor)
+    else:
+        if fireball%10 == 0:
+            iceObj.append(IceBall())
+        fireball = fireball + 1
+        pass
     
+    for ball in iceObj:
+        ball.removeItem(gridObj.getMatrix())
+        for i in range(3):
+            ball.changeY(gridObj.getMatrix(), mandalorianObj, configObj, shieldObj)
+        ball.placeItem(gridObj.getMatrix(), mandalorianObj.getX(), dragonObj.getY())
+        mandalorianObj.showDin(gridObj.getMatrix()) 
+        shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())   
     move(5,0)
     for k in range(2):
         if speedupObj[k].showItem(gridObj.getMatrix(), mandalorianObj) == 1:
@@ -354,12 +367,18 @@ while True:
     magnetObj.showItem(gridObj.getMatrix())
     reprintLasers()
 
+    dragonObj.removeItem(gridObj.getMatrix())
+    dragonObj.changeY(gridObj.getMatrix(), mandalorianObj)
+    dragonObj.showItem(gridObj.getMatrix())
+
     for bullet in bulletObj:
         if bullet.getPlaced()  == 1:
             bullet.removeBullet(gridObj.getMatrix())
         for i in range(5):
-            bullet.changeY(gridObj.getMatrix(), 1, laserObj)
+            bullet.changeY(gridObj.getMatrix(), 1, laserObj, dragonObj, configObj)
         placed = bullet.showBullet(gridObj.getMatrix())
+
+    
 
 
     '''Gravity'''
@@ -464,7 +483,9 @@ while True:
         
 
     
-    if configObj.getLives() == 0 or configObj.getTime() == 0:
+    if configObj.getLives() == 0 or configObj.getTime() == 0 or configObj.getEnemyLives() == 0:
         os.system('clear')
         print("Game Over!")
         quit()
+
+    

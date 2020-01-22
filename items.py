@@ -32,23 +32,23 @@ class Laser(Item):
         self.__y = y
         self._choice = random.randint(0,3)
         if self._choice == 0:
-            self._matrix = numpy.array([("0", " ","0"," ","0"," ","0"," ","0"," ","0"," ","0")])
+            self._matrix = numpy.array([(Fore.RED + "0" +Fore.RESET , " ",Fore.RED + "0" +Fore.RESET ," ",Fore.RED + "0" +Fore.RESET ," ",Fore.RED + "0" +Fore.RESET ," ",Fore.RED + "0" +Fore.RESET ," ",Fore.RED + "0" +Fore.RESET ," ",Fore.RED + "0" +Fore.RESET )])
             self.__height = 1
             self.__width = 13
 
         elif self._choice == 1:
-            self._matrix = numpy.array([("0","0","0","0","0","0","0")]).transpose()
+            self._matrix = numpy.array([(Fore.RED + "0" +Fore.RESET ,Fore.RED + "0" +Fore.RESET ,Fore.RED + "0" +Fore.RESET ,Fore.RED + "0" +Fore.RESET ,Fore.RED + "0" +Fore.RESET ,Fore.RED + "0" +Fore.RESET ,Fore.RED + "0" +Fore.RESET )]).transpose()
             self.__height = 7
             self.__width = 1
 
         else:
-            self._matrix = numpy.array([("0"," "," ", " ", " ", " ", " "),
-                                        (" ","0"," ", " ", " ", " ", " "),
-                                        (" "," ","0", " ", " ", " ", " "),
-                                        (" "," "," ", "0", " ", " ", " "),
-                                        (" "," "," ", " ", "0", " ", " "),
-                                        (" "," "," ", " ", " ", "0", " "),
-                                        (" "," "," ", " ", " ", " ", "0"),
+            self._matrix = numpy.array([(Fore.RED + "0" +Fore.RESET ," "," ", " ", " ", " ", " "),
+                                        (" ",Fore.RED + "0" +Fore.RESET ," ", " ", " ", " ", " "),
+                                        (" "," ",Fore.RED + "0" +Fore.RESET , " ", " ", " ", " "),
+                                        (" "," "," ", Fore.RED + "0" +Fore.RESET , " ", " ", " "),
+                                        (" "," "," ", " ", Fore.RED + "0" +Fore.RESET , " ", " "),
+                                        (" "," "," ", " ", " ", Fore.RED + "0" +Fore.RESET , " "),
+                                        (" "," "," ", " ", " ", " ", Fore.RED + "0" +Fore.RESET ),
             ])
             self.__height = 7
             self.__width = 7
@@ -96,29 +96,29 @@ class Coins(Item):
         self.__y = y
         self._choice = random.randint(0,2)
         if self._choice == 0:
-            self._matrix = numpy.array([("o"," ","o"," ","o"," ","o"," ","o"),
-                                        ("o"," ","o"," ","o"," ","o"," ","o"),
-                                        ("o"," ","o"," ","o"," ","o"," ","o")])
+            self._matrix = numpy.array([(Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET),
+                                        (Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET),
+                                        (Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET," ",Fore.GREEN + "o" + Fore.RESET)])
             self.__height = 3
             self.__width = 9
         elif self._choice == 1:
-            self._matrix = numpy.array([(" ","o"," "," "," ","o"," "),
-                                        ("o","o","o","o","o","o","o"),
-                                        ("o","o","o","o","o","o","o"),
-                                        (" ","o","o","o","o","o"," "),
-                                        (" "," ","o","o","o"," "," "),
-                                        (" "," "," ","o"," "," "," ")
+            self._matrix = numpy.array([(" ",Fore.GREEN + "o" + Fore.RESET," "," "," ",Fore.GREEN + "o" + Fore.RESET," "),
+                                        (Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET),
+                                        (Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET),
+                                        (" ",Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET," "),
+                                        (" "," ",Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET," "," "),
+                                        (" "," "," ",Fore.GREEN + "o" + Fore.RESET," "," "," ")
                                         ])
             self.__height = 6
             self.__width = 7
         elif self._choice == 2:
-            self._matrix = numpy.array([(" "," "," ","o"," "," "," "),
-                                        (" "," ","o","o","o"," "," "),
-                                        (" ","o","o","o","o","o"," "),
-                                        ("o","o","o","o","o","o","o"),
-                                        (" ","o","o","o","o","o"," "),
-                                        (" "," ","o","o","o"," "," "),
-                                        (" "," "," ","o"," "," "," "),
+            self._matrix = numpy.array([(" "," "," ",Fore.GREEN + "o" + Fore.RESET," "," "," "),
+                                        (" "," ",Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET," "," "),
+                                        (" ",Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET," "),
+                                        (Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET),
+                                        (" ",Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET," "),
+                                        (" "," ",Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET,Fore.GREEN + "o" + Fore.RESET," "," "),
+                                        (" "," "," ",Fore.GREEN + "o" + Fore.RESET," "," "," "),
                                         ])
             self.__height = 7
             self.__width = 7
@@ -181,11 +181,11 @@ class Magnet():
     def __init__(self, x, y):
         self._x = x
         self._y = y
-        self._matrix = numpy.array([(" ", "_", "_", "_", "_", "_", "_", " "), 
-                                    ("|", " ", " ", "_", "_", " ", " ", "|"),
-                                    ("|", " ", "|", " ", " ", "|", " ", "|"),
-                                    ("|", "_", "|", " ", " ", "|", "_", "|")
-        ])
+        self._matrix = numpy.array([(Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " "+ Back.RESET), 
+                                    (Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " "+ Back.RESET), 
+                                    (Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET, " ", " ", Back.RED + " " + Back.RESET,  Back.RED + " " + Back.RESET, Back.RED + " " + Back.RESET),
+                                    (Back.LIGHTYELLOW_EX + " " + Back.RESET, Back.LIGHTYELLOW_EX + " " + Back.RESET, Back.LIGHTYELLOW_EX + " " + Back.RESET, " ", " ", Back.LIGHTYELLOW_EX + " " + Back.RESET,  Back.LIGHTYELLOW_EX + " " + Back.RESET, Back.LIGHTYELLOW_EX + " " + Back.RESET),
+                                    ])
         self.__height = 4
         self.__width = 8
         self._placed = 0

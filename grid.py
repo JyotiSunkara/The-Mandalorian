@@ -3,7 +3,7 @@ import time
 import signal
 import os
 
-from colorama import init
+from colorama import init, Back
 init()
 
 def move (y, x):
