@@ -4,6 +4,9 @@ import time
 import numpy
 import random
 from colorama import init, Fore, Back, Style
+from playsound import playsound
+from pydub import AudioSegment
+from pydub.playback import play
 init()
 
 def move (y, x):
@@ -289,7 +292,7 @@ def moveDin():
             moveX = -1
             mandalorianObj.setAirTime(0) 
             mandalorianObj.changeHeightAir(1)
-        elif mandalorianObj.getX() > magnetObj.getX() and mandalorianObj.getX() + 1 < 30:
+        elif mandalorianObj.getX() < magnetObj.getX() and mandalorianObj.getX() + 1 < 30:
             moveX = 1
         if mandalorianObj.getY() > magnetObj.getY() and mandalorianObj.bayehaathkakhel(configObj.getStart()):
             moveY = -1
@@ -329,6 +332,9 @@ def moveDin():
         
 bulletObj = []
 fireball = 0
+song = AudioSegment.from_wav("./music/Jetpack.wav")
+play(song)
+
 while True: 
     
     move(2,0)
@@ -354,8 +360,8 @@ while True:
         for i in range(3):
             ball.changeY(gridObj.getMatrix(), mandalorianObj, configObj, shieldObj)
         ball.placeItem(gridObj.getMatrix(), mandalorianObj.getX(), dragonObj.getY())
-        mandalorianObj.showDin(gridObj.getMatrix()) 
         shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())   
+        mandalorianObj.showDin(gridObj.getMatrix()) 
     move(5,0)
     for k in range(2):
         if speedupObj[k].showItem(gridObj.getMatrix(), mandalorianObj) == 1:
