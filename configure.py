@@ -24,6 +24,7 @@ class Configure:
 		self._start = self._start + value
 
 	def incrementCoins(self):
+		os.system("aplay -q ./music/Coin.wav &")
 		self._coins = self._coins + 1
 
 	def getCoins(self):
@@ -31,6 +32,7 @@ class Configure:
 	
 	def decrementLives(self):
 		if self._lives > 0:
+			os.system("aplay -q ./music/Death.wav &")
 			self._lives = self._lives - 1
 		os.system('clear')
 

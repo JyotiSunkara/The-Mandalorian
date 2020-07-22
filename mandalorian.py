@@ -1,5 +1,6 @@
 from colorama import Fore, Back, Style
 import numpy
+import os
 
 powerMatrix = numpy.array([("<","i","a","m","s","p","e","e","d",">")])
 class Din:
@@ -18,6 +19,7 @@ class Din:
         self._killed = False
         self._heightAir = 0
         self._airTime = 0
+        self._dragonMode = 0
     
     def getX(self):
         return self._x
@@ -58,40 +60,43 @@ class Din:
     def changeX(self, changeVal, grid, configObj, powerupSpeed, shield):
         
         self._x = self._x + changeVal
-        if shield.getShield() == False:
-            for i in range(self._x, self._x + 3):
-                for j in range(self._y, self._y + 3):
-                    if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
-                        configObj.incrementCoins()
-                    elif grid[i,j] == Fore.RED + "0" +Fore.RESET:
-                        configObj.decrementLives()
-                        configObj.restart()
-                        return -1
-        else:
-            for i in range(self._x, self._x + 3):
-                for j in range(self._y - 2, self._y + 5):
-                    if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
-                        configObj.incrementCoins()
+        if self._dragonMode == 0:
+            if shield.getShield() == False:
+                for i in range(self._x, self._x + 3):
+                    for j in range(self._y, self._y + 3):
+                        if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
+                            configObj.incrementCoins()
+                        elif grid[i,j] == Fore.RED + "0" +Fore.RESET:
+                            configObj.decrementLives()
+                            configObj.restart()
+                            return -1
+            else:
+                for i in range(self._x, self._x + 3):
+                    for j in range(self._y - 2, self._y + 5):
+                        if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
+                            configObj.incrementCoins()
+
         return 0
 
     
     def changeY(self, changeVal, grid, configObj, powerupSpeed, shield):
 
         self._y = self._y + changeVal
-        if shield.getShield() == False:
-            for i in range(self._x, self._x + 3):
-                for j in range(self._y, self._y + 3):
-                    if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
-                        configObj.incrementCoins()
-                    elif grid[i,j] == Fore.RED + "0" +Fore.RESET:
-                        configObj.decrementLives()
-                        configObj.restart()
-                        return -1   
-        else:
-            for i in range(self._x, self._x + 3):
-                for j in range(self._y - 2, self._y + 5):
-                    if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
-                        configObj.incrementCoins()
+        if self._dragonMode == 0:
+            if shield.getShield() == False:
+                for i in range(self._x, self._x + 3):
+                    for j in range(self._y, self._y + 3):
+                        if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
+                            configObj.incrementCoins()
+                        elif grid[i,j] == Fore.RED + "0" +Fore.RESET:
+                            configObj.decrementLives()
+                            configObj.restart()
+                            return -1   
+            else:
+                for i in range(self._x, self._x + 3):
+                    for j in range(self._y - 2, self._y + 5):
+                        if grid[i,j] == Fore.GREEN + "o" + Fore.RESET:
+                            configObj.incrementCoins()
         return 0
 
 
@@ -102,8 +107,9 @@ class Din:
         '''Place the Mandalorian: Din on the grid at given position of top left of the character'''
         self._x = x
         self._y = y
-        self._direction = direction
-        grid[self._x:self._x+3, self._y:self._y+3] = self._dinRight
+        if self._dragonMode == 0:
+            self._direction = direction
+            grid[self._x:self._x+3, self._y:self._y+3] = self._dinRight
        
     def removeDin(self, grid):
         grid[self._x:self._x+3, self._y:self._y+3] = " "
@@ -239,6 +245,7 @@ class Bullet():
                             if Fore.RED + "0" +Fore.RESET in grid[self._x: self._x + 1, self._y: self._y + 2]:
                                 laser.removeItem(grid)
                                 laser.setAlive(0)
+                                os.system("aplay -q ./music/LaserDead.wav &")
                 if self._y in range(dragonObj.getY(), dragonObj.getY() + dragonObj.getWidth()):
                     if self._x in range(dragonObj.getX(), dragonObj.getX() + dragonObj.getHeight()):
                         if " " not in grid[self._x: self._x + 1, self._y: self._y + 2]:

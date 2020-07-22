@@ -1,7 +1,7 @@
 from colorama import Fore, Back, Style
 import numpy
 import random
-
+import os
 class Item:
     def __init__(self, x, y):
         self.__x = x
@@ -156,6 +156,7 @@ class SpeedUp():
             for i in range(self._x, self._x + self.__height):
                 for j in range(self._y, self._y + self.__width):
                     if (grid[i,j] in mando.getRight() or grid[i,j] in mando.getRight()) and grid[i,j] != " ":
+                        os.system("aplay -q ./music/Speed.wav &")
                         self._used = 1
                         self.removeItem(grid)
                         return 1

@@ -1,7 +1,7 @@
 from colorama import Fore, Back, Style
 import numpy
 import random
-
+import os
 dragon=[list("_<>=======()                            "),
         list("(/ \___   /|\\\\          ()==========<>_ "),
         list("       \_/ | \\\\        //|\   ______/ \)"),
@@ -89,6 +89,8 @@ class IceBall():
             if self._alive == 1:
                 grid[self._x: self._x + 3, self._y: self._y + 3] = self._ball
                 self._placed = 1
+                os.system("aplay -q ./music/Ice.wav &")
+
         else:
             if self._alive == 1:
                 grid[self._x: self._x + 3, self._y: self._y + 3] = self._ball

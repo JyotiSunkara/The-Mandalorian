@@ -9,6 +9,31 @@ from pydub import AudioSegment
 from pydub.playback import play
 init()
 
+end = [list("      ___           ___           ___           ___                    ___                         ___           ___     "),
+       list("     /\__\         /\  \         /\  \         /\__\                  /\  \          ___          /\__\         /\  \    "), 
+       list("    /:/ _/_       /::\  \       |::\  \       /:/ _/_                /::\  \        /\  \        /:/ _/_       /::\  \   "), 
+       list("   /:/ /\  \     /:/\:\  \      |:|:\  \     /:/ /\__\              /:/\:\  \       \:\  \      /:/ /\__\     /:/\:\__\  "),
+       list("  /:/ /::\  \   /:/ /::\  \   __|:|\:\  \   /:/ /:/ _/_            /:/  \:\  \       \:\  \    /:/ /:/ _/_   /:/ /:/  /  "),
+       list(" /:/__\/\:\__\ /:/_/:/\:\__\ /::::|_\:\__\ /:/_/:/ /\__\          /:/__/ \:\__\  ___  \:\__\  /:/_/:/ /\__\ /:/_/:/__/___"),
+       list(" \:\  \ /:/  / \:\/:/  \/__/ \:\~~\  \/__/ \:\/:/ /:/  /          \:\  \ /:/  / /\  \ |:|  |  \:\/:/ /:/  / \:\/:::::/  /"),
+       list("  \:\  /:/  /   \::/__/       \:\  \        \::/_/:/  /            \:\  /:/  /  \:\  \|:|  |   \::/_/:/  /   \::/~~/~~~~ "),
+       list("   \:\/:/  /     \:\  \        \:\  \        \:\/:/  /              \:\/:/  /    \:\__|:|__|    \:\/:/  /     \:\~~\     "),
+       list("    \::/  /       \:\__\        \:\__\        \::/  /                \::/  /      \::::/__/      \::/  /       \:\__\    "),
+       list("     \/__/         \/__/         \/__/         \/__/                  \/__/        ~~~~           \/__/         \/__/    ")]
+
+
+win = [list("                  ___           ___                    ___                       ___     "),
+       list("                 /\  \         /\  \                  /\  \                     /\  \    "),
+       list("      ___       /::\  \        \:\  \                _\:\  \       ___          \:\  \   "),
+       list("     /|  |     /:/\:\  \        \:\  \              /\ \:\  \     /\__\          \:\  \  "),
+       list("    |:|  |    /:/  \:\  \   ___  \:\  \            _\:\ \:\  \   /:/__/      _____\:\  \ "),
+       list("    |:|  |   /:/__/ \:\__\ /\  \  \:\__\          /\ \:\ \:\__\ /::\  \     /::::::::\__\\"),
+       list("  __|:|__|   \:\  \ /:/  / \:\  \ /:/  /          \:\ \:\/:/  / \/\:\  \__  \:\~~\~~\/__/"),
+       list(" /::::\  \    \:\  /:/  /   \:\  /:/  /            \:\ \::/  /   ~~\:\/\__\  \:\  \      "),
+       list(" ~~~~\:\  \    \:\/:/  /     \:\/:/  /              \:\/:/  /       \::/  /   \:\  \     "),
+       list("      \:\__\    \::/  /       \::/  /                \::/  /        /:/  /     \:\__\    "),
+       list("       \/__/     \/__/         \/__/                  \/__/         \/__/       \/__/    ")]
+
 def move (y, x):
     print("\033[%d;%dH" % (y, x))
 
@@ -23,6 +48,7 @@ from enemy import Dragon, IceBall
 
 
 gridObj = Grid(30, 500)
+os.system("aplay -q ./music/Jetpack.wav &")
 
 mandalorianObj = Din(25, 10, 1)
 mandalorianObj.placeDin(gridObj.getMatrix(), 25, 10, 1)
@@ -270,13 +296,24 @@ def moveDin():
 
     
     if keyPress == 'q':
+        os.system("kill $(ps aux | grep '[a]play' | awk '{print $2}')")
+        os.system('clear')
+        for i in range(0, len(end)):
+            for j in range(0, len(end[0])):
+                print(Fore.WHITE + end[i][j] + Fore.RESET, end='')
+            print()
+      
+        os.system("aplay -q ./music/Lose.wav &")
+        time.sleep(5)
         quit()
     
     if keyPress == 's':
+        os.system("aplay -q ./music/Bullet.wav &")
         bulletObj.append(Bullet(mandalorianObj.getX() - 1, mandalorianObj.getY()))
         
     if keyPress == " ":
         if shieldObj.getWait() == 0:
+            os.system("aplay -q ./music/Speed.wav &")
             shieldObj.enableShield()
             shieldObj.setEnd(configObj.getTime() - 10)
             shieldObj.showShield(gridObj.getMatrix(), mandalorianObj.getX(), mandalorianObj.getY())
@@ -332,8 +369,6 @@ def moveDin():
         
 bulletObj = []
 fireball = 0
-song = AudioSegment.from_wav("./music/Jetpack.wav")
-play(song)
 
 while True: 
     
@@ -356,7 +391,8 @@ while True:
         pass
     
     for ball in iceObj:
-        ball.removeItem(gridObj.getMatrix())
+        if ball.getPlaced() == 1:
+            ball.removeItem(gridObj.getMatrix())
         for i in range(3):
             ball.changeY(gridObj.getMatrix(), mandalorianObj, configObj, shieldObj)
         ball.placeItem(gridObj.getMatrix(), mandalorianObj.getX(), dragonObj.getY())
@@ -489,9 +525,39 @@ while True:
         
 
     
-    if configObj.getLives() == 0 or configObj.getTime() == 0 or configObj.getEnemyLives() == 0:
+    if configObj.getTime() == 0:
+        os.system("kill $(ps aux | grep '[a]play' | awk '{print $2}')")
         os.system('clear')
-        print("Game Over!")
+        for i in range(0, len(end)):
+            for j in range(0, len(end[0])):
+                print(Fore.WHITE + end[i][j] + Fore.RESET, end='')
+            print()
+      
+        os.system("aplay -q ./music/Lose.wav &")
+        time.sleep(5)
         quit()
 
-    
+    if configObj.getEnemyLives() == 0:
+        os.system("kill $(ps aux | grep '[a]play' | awk '{print $2}')")
+        os.system('clear')
+        for i in range(0, len(win)):
+            for j in range(0, len(win[0])):
+                print(Fore.WHITE + win[i][j] + Fore.RESET, end='')
+            print()
+        os.system("aplay -q ./music/Win.wav &")
+        time.sleep(5)
+        quit()
+
+    if configObj.getLives() == 0:
+        os.system("kill $(ps aux | grep '[a]play' | awk '{print $2}')")
+        os.system('clear')
+        for i in range(0, len(end)):
+            for j in range(0, len(end[0])):
+                print(Fore.WHITE + end[i][j] + Fore.RESET, end='')
+            print()
+      
+        os.system("aplay -q ./music/Lose.wav &")
+        time.sleep(5)
+        quit()
+
+
