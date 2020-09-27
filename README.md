@@ -15,7 +15,7 @@ An arcade game in Python3 (terminal-based), heavily inspired by Jetpack Joyride 
 
 ### Gravity
 
-Players falls down with increasing acceleration when in air.
+Players falls down with increasing velocity when in air.
 
 ### Magnet
 
